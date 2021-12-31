@@ -16,25 +16,29 @@ public class PageonceController {
     private final PageonceService pageonceService;
 
     @PostMapping("/write")
-    public PageonceWriteResponseDto write(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody PageonceWriteRequestDto pageonceWriteRequestDto){
-        return pageonceService.write(userDetails,pageonceWriteRequestDto);
+    public PageonceWriteResponseDto write(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody PageonceWriteRequestDto pageonceWriteRequestDto) {
+        return pageonceService.write(userDetails, pageonceWriteRequestDto);
     }
 
     @GetMapping("/view/{pageonceId}")
-    public PageonceDetailsResponseDto detailview(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long pageonceId){
-        return pageonceService.detailView(userDetails,pageonceId);
+    public PageonceDetailsResponseDto detailview(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long pageonceId) {
+        return pageonceService.detailView(userDetails, pageonceId);
     }
 
     @PatchMapping("/modify/{pageonceId}")
     public PageonceWriteResponseDto modify(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                            @PathVariable Long pageonceId,
-                                           @RequestBody PageonceWriteRequestDto pageonceWriteRequestDto){
-        return pageonceService.modify(userDetails,pageonceId,pageonceWriteRequestDto);
+                                           @RequestBody PageonceWriteRequestDto pageonceWriteRequestDto) {
+        return pageonceService.modify(userDetails, pageonceId, pageonceWriteRequestDto);
     }
 
     @PatchMapping("/delete/{pageonceId}")
-    public SimpleResponseDto delete(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long pageonceId){
-        return pageonceService.delete(userDetails,pageonceId);
+    public SimpleResponseDto delete(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long pageonceId) {
+        return pageonceService.delete(userDetails, pageonceId);
     }
 
+    @PatchMapping("/restore/{pageonceId}")
+    public SimpleResponseDto restore(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long pageonceId) {
+        return pageonceService.restore(userDetails, pageonceId);
+    }
 }
