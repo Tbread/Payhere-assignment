@@ -1,6 +1,7 @@
 package com.payhere.pageonce.controller;
 
 import com.payhere.pageonce.dto.request.PageonceWriteRequestDto;
+import com.payhere.pageonce.dto.response.PageonceViewResponseDto;
 import com.payhere.pageonce.dto.response.SimpleResponseDto;
 import com.payhere.pageonce.dto.response.PageonceDetailsResponseDto;
 import com.payhere.pageonce.dto.response.PageonceWriteResponseDto;
@@ -40,5 +41,10 @@ public class PageonceController {
     @PatchMapping("/restore/{pageonceId}")
     public SimpleResponseDto restore(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long pageonceId) {
         return pageonceService.restore(userDetails, pageonceId);
+    }
+
+    @GetMapping("/view")
+    public PageonceViewResponseDto viewAll(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return pageonceService.viewAll(userDetails);
     }
 }
