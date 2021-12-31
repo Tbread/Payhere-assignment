@@ -40,4 +40,8 @@ public class Pageonce extends TimeStamped{
         this.expenditure = pageonceWriteRequestDto.getExpenditure();
     }
 
+    public void delete(boolean deleted){
+        this.deleted = deleted;
+    }
+
 }

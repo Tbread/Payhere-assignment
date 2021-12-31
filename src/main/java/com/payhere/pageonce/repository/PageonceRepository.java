@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface PageonceRepository extends JpaRepository<Pageonce,Long> {
     List<Pageonce> findByUserIdAndDeleted(Long userid,boolean isDeleted);
     Optional<Pageonce> findById(Long id);
+    Optional<Pageonce> findByIdAndDeleted(Long id,boolean isDeleted);
 }
