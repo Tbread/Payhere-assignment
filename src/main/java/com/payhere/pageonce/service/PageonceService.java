@@ -17,6 +17,8 @@ import java.util.Optional;
 public class PageonceService {
     private final PageonceRepository pageonceRepository;
 
+
+    //가계부 작성
     @Transactional
     public PageonceWriteResponseDto write(UserDetailsImpl userDetails, PageonceWriteRequestDto requestDto) {
         Long userId = userDetails.getUser().getId();
@@ -34,19 +36,20 @@ public class PageonceService {
                 .build();
     }
 
-    public PageonceDetailsResponseDto detailView(UserDetailsImpl userDetails, Long pageonceId){
+    //가계부 상세조회
+    public PageonceDetailsResponseDto detailView(UserDetailsImpl userDetails, Long pageonceId) {
         PageonceDetailsResponseDto pageonceDetailsResponseDto;
-        Optional<Pageonce> pageonceOptional = pageonceRepository.findById(pageonceId);
-        if(!pageonceOptional.isPresent()){
+        Optional<Pageonce> pageonceOptional = pageonceRepository.findByIdAndDeleted(pageonceId,false);
+        if (!pageonceOptional.isPresent()) {
             pageonceDetailsResponseDto = PageonceDetailsResponseDto.builder()
                     .success(false)
-                    .message("해당 ID의 가계부가 존재하지 않습니다.")
+                    .message("해당 ID의 가계부가 존재하지 않거나 삭제된 가계부입니다.")
                     .build();
         } else {
             Pageonce pageonce = pageonceOptional.get();
             Long ownerUserId = pageonce.getUserId();
             Long requesterId = userDetails.getUser().getId();
-            if(!ownerUserId.equals(requesterId)){
+            if (!ownerUserId.equals(requesterId)) {
                 pageonceDetailsResponseDto = PageonceDetailsResponseDto.builder()
                         .success(false)
                         .message("자신의 가계부만 조회할 수 있습니다")
@@ -65,20 +68,22 @@ public class PageonceService {
         return pageonceDetailsResponseDto;
     }
 
+
+    //가계부 수정
     @Transactional
-    public PageonceWriteResponseDto modify(UserDetailsImpl userDetails,Long pageonceId,PageonceWriteRequestDto pageonceWriteRequestDto){
+    public PageonceWriteResponseDto modify(UserDetailsImpl userDetails, Long pageonceId, PageonceWriteRequestDto pageonceWriteRequestDto) {
         PageonceWriteResponseDto pageonceWriteResponseDto;
-        Optional<Pageonce> pageonceOptional = pageonceRepository.findById(pageonceId);
-        if(!pageonceOptional.isPresent()){
+        Optional<Pageonce> pageonceOptional = pageonceRepository.findByIdAndDeleted(pageonceId,false);
+        if (!pageonceOptional.isPresent()) {
             pageonceWriteResponseDto = PageonceWriteResponseDto.builder()
                     .success(false)
-                    .message("해당 ID의 가계부가 존재하지 않습니다.")
+                    .message("해당 ID의 가계부가 존재하지 않거나 삭제된 가계부입니다.")
                     .build();
         } else {
             Pageonce pageonce = pageonceOptional.get();
             Long requesterId = userDetails.getUser().getId();
             Long ownerId = pageonce.getUserId();
-            if(!requesterId.equals(ownerId)){
+            if (!requesterId.equals(ownerId)) {
                 pageonceWriteResponseDto = PageonceWriteResponseDto.builder()
                         .success(false)
                         .message("자신의 가계부만 수정할 수 있습니다.")
@@ -96,11 +101,13 @@ public class PageonceService {
         return pageonceWriteResponseDto;
     }
 
+
+    //가계부 삭제
     @Transactional
-    public SimpleResponseDto delete(UserDetailsImpl userDetails, Long pageonceId){
-        Optional<Pageonce> pageonceOptional = pageonceRepository.findByIdAndDeleted(pageonceId,false);
+    public SimpleResponseDto delete(UserDetailsImpl userDetails, Long pageonceId) {
+        Optional<Pageonce> pageonceOptional = pageonceRepository.findByIdAndDeleted(pageonceId, false);
         SimpleResponseDto simpleResponseDto;
-        if(!pageonceOptional.isPresent()){
+        if (!pageonceOptional.isPresent()) {
             simpleResponseDto = SimpleResponseDto.builder()
                     .success(false)
                     .message("해당 ID의 가계부가 존재하지 않거나 이미 삭제된 가계부입니다.")
@@ -109,7 +116,7 @@ public class PageonceService {
             Pageonce pageonce = pageonceOptional.get();
             Long ownerId = pageonce.getUserId();
             Long requester = userDetails.getUser().getId();
-            if(!ownerId.equals(requester)){
+            if (!ownerId.equals(requester)) {
                 simpleResponseDto = SimpleResponseDto.builder()
                         .success(false)
                         .message("자신의 가계부만 삭제할 수 있습니다.")
@@ -125,4 +132,34 @@ public class PageonceService {
         return simpleResponseDto;
     }
 
+
+    //가계부 복구
+    @Transactional
+    public SimpleResponseDto restore(UserDetailsImpl userDetails, Long pageonceId) {
+        SimpleResponseDto simpleResponseDto;
+        Optional<Pageonce> pageonceOptional = pageonceRepository.findByIdAndDeleted(pageonceId,true);
+        if(!pageonceOptional.isPresent()){
+            simpleResponseDto = SimpleResponseDto.builder()
+                    .success(false)
+                    .message("해당 ID의 삭제된 가계부가 존재하지 않습니다.")
+                    .build();
+        } else {
+            Pageonce pageonce = pageonceOptional.get();
+            Long ownerId = pageonce.getUserId();
+            Long requester = userDetails.getUser().getId();
+            if(!ownerId.equals(requester)){
+                simpleResponseDto = SimpleResponseDto.builder()
+                        .success(false)
+                        .message("자신의 가계부만 복구할 수 있습니다.")
+                        .build();
+            } else {
+                pageonce.delete(false);
+                simpleResponseDto = SimpleResponseDto.builder()
+                        .success(true)
+                        .message("성공적으로 복구하였습니다.")
+                        .build();
+            }
+        }
+        return simpleResponseDto;
+    }
 }

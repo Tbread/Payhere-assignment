@@ -36,4 +36,5 @@ public class PageonceController {
     public SimpleResponseDto delete(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long pageonceId){
         return pageonceService.delete(userDetails,pageonceId);
     }
+
 }
