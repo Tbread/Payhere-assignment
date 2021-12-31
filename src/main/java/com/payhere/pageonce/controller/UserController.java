@@ -1,6 +1,8 @@
 package com.payhere.pageonce.controller;
 
+import com.payhere.pageonce.dto.request.LoginRequestDto;
 import com.payhere.pageonce.dto.request.SignUpRequestDto;
+import com.payhere.pageonce.dto.response.LoginResponseDto;
 import com.payhere.pageonce.dto.response.SignUpResponseDto;
 import com.payhere.pageonce.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -20,4 +22,8 @@ public class UserController {
         return userService.register(signUpRequestDto);
     }
 
+    @PostMapping("/login")
+    public LoginResponseDto login(@RequestBody @Valid LoginRequestDto loginRequestDto){
+        return userService.login(loginRequestDto);
+    }
 }
