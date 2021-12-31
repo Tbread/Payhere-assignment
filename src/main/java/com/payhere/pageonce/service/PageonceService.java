@@ -35,15 +35,15 @@ public class PageonceService {
 
     public PageonceDetailsResponseDto detailView(UserDetailsImpl userDetails, Long pageonceId){
         PageonceDetailsResponseDto pageonceDetailsResponseDto;
-        Optional<Pageonce> pageonce = pageonceRepository.findById(pageonceId);
-        if(!pageonce.isPresent()){
+        Optional<Pageonce> pageonceOptional = pageonceRepository.findById(pageonceId);
+        if(!pageonceOptional.isPresent()){
             pageonceDetailsResponseDto = PageonceDetailsResponseDto.builder()
                     .success(false)
                     .message("해당 ID의 가계부가 존재하지 않습니다.")
                     .build();
         } else {
-            Pageonce pageonce1 = pageonce.get();
-            Long ownerUserId = pageonce1.getUserId();
+            Pageonce pageonce = pageonceOptional.get();
+            Long ownerUserId = pageonce.getUserId();
             Long requesterId = userDetails.getUser().getId();
             if(!ownerUserId.equals(requesterId)){
                 pageonceDetailsResponseDto = PageonceDetailsResponseDto.builder()
@@ -54,15 +54,45 @@ public class PageonceService {
                 pageonceDetailsResponseDto = PageonceDetailsResponseDto.builder()
                         .success(true)
                         .message("성공적으로 불러왔습니다.")
-                        .expenditure(pageonce1.getExpenditure())
-                        .memo(pageonce1.getMemo())
-                        .createdAt(pageonce1.getCreatedAt())
-                        .modifiedAt(pageonce1.getModifiedAt())
+                        .expenditure(pageonce.getExpenditure())
+                        .memo(pageonce.getMemo())
+                        .createdAt(pageonce.getCreatedAt())
+                        .modifiedAt(pageonce.getModifiedAt())
                         .build();
             }
         }
         return pageonceDetailsResponseDto;
     }
 
-    
+    @Transactional
+    public PageonceWriteResponseDto modify(UserDetailsImpl userDetails,Long pageonceId,PageonceWriteRequestDto pageonceWriteRequestDto){
+        PageonceWriteResponseDto pageonceWriteResponseDto;
+        Optional<Pageonce> pageonceOptional = pageonceRepository.findById(pageonceId);
+        if(!pageonceOptional.isPresent()){
+            pageonceWriteResponseDto = PageonceWriteResponseDto.builder()
+                    .success(false)
+                    .message("해당 ID의 가계부가 존재하지 않습니다.")
+                    .build();
+        } else {
+            Pageonce pageonce = pageonceOptional.get();
+            Long requesterId = userDetails.getUser().getId();
+            Long ownerId = pageonce.getUserId();
+            if(!requesterId.equals(ownerId)){
+                pageonceWriteResponseDto = PageonceWriteResponseDto.builder()
+                        .success(false)
+                        .message("자신의 가계부만 수정할 수 있습니다.")
+                        .build();
+            } else {
+                pageonce.update(pageonceWriteRequestDto);
+                pageonceWriteResponseDto = PageonceWriteResponseDto.builder()
+                        .success(true)
+                        .message("성공적으로 수정하였습니다.")
+                        .expenditure(pageonceWriteRequestDto.getExpenditure())
+                        .memo(pageonceWriteRequestDto.getMemo())
+                        .build();
+            }
+        }
+        return pageonceWriteResponseDto;
+    }
+
 }

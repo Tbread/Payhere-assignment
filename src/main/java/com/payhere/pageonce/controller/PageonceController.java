@@ -23,4 +23,11 @@ public class PageonceController {
     public PageonceDetailsResponseDto detailview(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long pageonceId){
         return pageonceService.detailView(userDetails,pageonceId);
     }
+
+    @PatchMapping("/modify/{pageonceId}")
+    public PageonceWriteResponseDto modify(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                           @PathVariable Long pageonceId,
+                                           @RequestBody PageonceWriteRequestDto pageonceWriteRequestDto){
+        return pageonceService.modify(userDetails,pageonceId,pageonceWriteRequestDto);
+    }
 }
