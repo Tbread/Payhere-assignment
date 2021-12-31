@@ -1,7 +1,7 @@
 package com.payhere.pageonce.service;
 
 import com.payhere.pageonce.dto.request.PageonceWriteRequestDto;
-import com.payhere.pageonce.dto.response.PageonceDeleteResponseDto;
+import com.payhere.pageonce.dto.response.SimpleResponseDto;
 import com.payhere.pageonce.dto.response.PageonceDetailsResponseDto;
 import com.payhere.pageonce.dto.response.PageonceWriteResponseDto;
 import com.payhere.pageonce.model.Pageonce;
@@ -97,11 +97,11 @@ public class PageonceService {
     }
 
     @Transactional
-    public PageonceDeleteResponseDto delete(UserDetailsImpl userDetails,Long pageonceId){
+    public SimpleResponseDto delete(UserDetailsImpl userDetails, Long pageonceId){
         Optional<Pageonce> pageonceOptional = pageonceRepository.findByIdAndDeleted(pageonceId,false);
-        PageonceDeleteResponseDto pageonceDeleteResponseDto;
+        SimpleResponseDto simpleResponseDto;
         if(!pageonceOptional.isPresent()){
-            pageonceDeleteResponseDto = PageonceDeleteResponseDto.builder()
+            simpleResponseDto = SimpleResponseDto.builder()
                     .success(false)
                     .message("해당 ID의 가계부가 존재하지 않거나 이미 삭제된 가계부입니다.")
                     .build();
@@ -110,19 +110,19 @@ public class PageonceService {
             Long ownerId = pageonce.getUserId();
             Long requester = userDetails.getUser().getId();
             if(!ownerId.equals(requester)){
-                pageonceDeleteResponseDto = PageonceDeleteResponseDto.builder()
+                simpleResponseDto = SimpleResponseDto.builder()
                         .success(false)
                         .message("자신의 가계부만 삭제할 수 있습니다.")
                         .build();
             } else {
                 pageonce.delete(true);
-                pageonceDeleteResponseDto = PageonceDeleteResponseDto.builder()
+                simpleResponseDto = SimpleResponseDto.builder()
                         .success(true)
                         .message("성공적으로 삭제하였습니다.")
                         .build();
             }
         }
-        return pageonceDeleteResponseDto;
+        return simpleResponseDto;
     }
 
 }

@@ -1,7 +1,7 @@
 package com.payhere.pageonce.controller;
 
 import com.payhere.pageonce.dto.request.PageonceWriteRequestDto;
-import com.payhere.pageonce.dto.response.PageonceDeleteResponseDto;
+import com.payhere.pageonce.dto.response.SimpleResponseDto;
 import com.payhere.pageonce.dto.response.PageonceDetailsResponseDto;
 import com.payhere.pageonce.dto.response.PageonceWriteResponseDto;
 import com.payhere.pageonce.service.PageonceService;
@@ -33,7 +33,7 @@ public class PageonceController {
     }
 
     @PatchMapping("/delete/{pageonceId}")
-    public PageonceDeleteResponseDto delete(@AuthenticationPrincipal UserDetailsImpl userDetails,@PathVariable Long pageonceId){
+    public SimpleResponseDto delete(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long pageonceId){
         return pageonceService.delete(userDetails,pageonceId);
     }
 }
