@@ -68,7 +68,7 @@ public class UserService {
                     .build();
         } else {
             String realPass = user.get().getPassword();
-            if (!password.equals(realPass)){
+            if (!passwordEncoder.matches(realPass,password)){
                 loginResponseDto = LoginResponseDto.builder()
                         .success(false)
                         .message("아이디 또는 비밀번호가 올바르지않습니다.")
