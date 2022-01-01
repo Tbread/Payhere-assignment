@@ -214,7 +214,7 @@ class UserControllerTest extends BaseIntegrationTest {
         resultActions
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("success").value(false))
-                .andExpect(jsonPath("message").value("패스워드는 필수 입력 값입니다."))
+                .andExpect(jsonPath("message").value("비밀번호는 필수 입력 값입니다."))
                 .andExpect(jsonPath("email").isEmpty())
                 .andExpect(jsonPath("token").isEmpty());
 
