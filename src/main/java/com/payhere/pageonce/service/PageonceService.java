@@ -10,6 +10,7 @@ import com.payhere.pageonce.model.PageonceView;
 import com.payhere.pageonce.repository.PageonceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -24,7 +25,14 @@ public class PageonceService {
 
     //가계부 작성
     @Transactional
-    public PageonceWriteResponseDto write(UserDetailsImpl userDetails, PageonceWriteRequestDto requestDto) {
+    public PageonceWriteResponseDto write(UserDetailsImpl userDetails, PageonceWriteRequestDto requestDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            String message = bindingResult.getAllErrors().get(0).getDefaultMessage();
+            return PageonceWriteResponseDto.builder()
+                    .success(false)
+                    .message(message)
+                    .build();
+        }
         Long userId = userDetails.getUser().getId();
         Pageonce pageonce = Pageonce.builder()
                 .expenditure(requestDto.getExpenditure())
@@ -38,12 +46,13 @@ public class PageonceService {
                 .expenditure(requestDto.getExpenditure())
                 .memo(requestDto.getMemo())
                 .build();
+
     }
 
     //가계부 상세조회
     public PageonceDetailsResponseDto detailView(UserDetailsImpl userDetails, Long pageonceId) {
         PageonceDetailsResponseDto pageonceDetailsResponseDto;
-        Optional<Pageonce> pageonceOptional = pageonceRepository.findByIdAndDeleted(pageonceId,false);
+        Optional<Pageonce> pageonceOptional = pageonceRepository.findByIdAndDeleted(pageonceId, false);
         if (!pageonceOptional.isPresent()) {
             pageonceDetailsResponseDto = PageonceDetailsResponseDto.builder()
                     .success(false)
@@ -75,9 +84,19 @@ public class PageonceService {
 
     //가계부 수정
     @Transactional
-    public PageonceWriteResponseDto modify(UserDetailsImpl userDetails, Long pageonceId, PageonceWriteRequestDto pageonceWriteRequestDto) {
+    public PageonceWriteResponseDto modify(UserDetailsImpl userDetails,
+                                           Long pageonceId,
+                                           PageonceWriteRequestDto pageonceWriteRequestDto,
+                                           BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            String message = bindingResult.getAllErrors().get(0).getDefaultMessage();
+            return PageonceWriteResponseDto.builder()
+                    .success(false)
+                    .message(message)
+                    .build();
+        }
         PageonceWriteResponseDto pageonceWriteResponseDto;
-        Optional<Pageonce> pageonceOptional = pageonceRepository.findByIdAndDeleted(pageonceId,false);
+        Optional<Pageonce> pageonceOptional = pageonceRepository.findByIdAndDeleted(pageonceId, false);
         if (!pageonceOptional.isPresent()) {
             pageonceWriteResponseDto = PageonceWriteResponseDto.builder()
                     .success(false)
@@ -141,8 +160,8 @@ public class PageonceService {
     @Transactional
     public SimpleResponseDto restore(UserDetailsImpl userDetails, Long pageonceId) {
         SimpleResponseDto simpleResponseDto;
-        Optional<Pageonce> pageonceOptional = pageonceRepository.findByIdAndDeleted(pageonceId,true);
-        if(!pageonceOptional.isPresent()){
+        Optional<Pageonce> pageonceOptional = pageonceRepository.findByIdAndDeleted(pageonceId, true);
+        if (!pageonceOptional.isPresent()) {
             simpleResponseDto = SimpleResponseDto.builder()
                     .success(false)
                     .message("해당 ID의 삭제된 가계부가 존재하지 않습니다.")
@@ -151,7 +170,7 @@ public class PageonceService {
             Pageonce pageonce = pageonceOptional.get();
             Long ownerId = pageonce.getUserId();
             Long requester = userDetails.getUser().getId();
-            if(!ownerId.equals(requester)){
+            if (!ownerId.equals(requester)) {
                 simpleResponseDto = SimpleResponseDto.builder()
                         .success(false)
                         .message("자신의 가계부만 복구할 수 있습니다.")
@@ -168,10 +187,10 @@ public class PageonceService {
     }
 
     //가계부 리스트 조회
-    public PageonceViewResponseDto viewAll(UserDetailsImpl userDetails){
-        List<Pageonce> pageonceList = pageonceRepository.findByUserIdAndDeleted(userDetails.getUser().getId(),false);
+    public PageonceViewResponseDto viewAll(UserDetailsImpl userDetails) {
+        List<Pageonce> pageonceList = pageonceRepository.findByUserIdAndDeleted(userDetails.getUser().getId(), false);
         List<PageonceView> pageonceViewList = new ArrayList<>();
-        for(Pageonce pageonce:pageonceList){
+        for (Pageonce pageonce : pageonceList) {
             PageonceView pageonceView = PageonceView.builder()
                     .expenditure(pageonce.getExpenditure())
                     .memo(pageonce.getMemo())

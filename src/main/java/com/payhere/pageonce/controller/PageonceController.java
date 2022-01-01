@@ -9,7 +9,10 @@ import com.payhere.pageonce.service.PageonceService;
 import com.payhere.pageonce.service.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @RestController
@@ -17,8 +20,10 @@ public class PageonceController {
     private final PageonceService pageonceService;
 
     @PostMapping("/write")
-    public PageonceWriteResponseDto write(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody PageonceWriteRequestDto pageonceWriteRequestDto) {
-        return pageonceService.write(userDetails, pageonceWriteRequestDto);
+    public PageonceWriteResponseDto write(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                          @RequestBody @Valid PageonceWriteRequestDto pageonceWriteRequestDto,
+                                          BindingResult bindingResult) {
+        return pageonceService.write(userDetails, pageonceWriteRequestDto,bindingResult);
     }
 
     @GetMapping("/view/{pageonceId}")
@@ -29,8 +34,9 @@ public class PageonceController {
     @PatchMapping("/modify/{pageonceId}")
     public PageonceWriteResponseDto modify(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                            @PathVariable Long pageonceId,
-                                           @RequestBody PageonceWriteRequestDto pageonceWriteRequestDto) {
-        return pageonceService.modify(userDetails, pageonceId, pageonceWriteRequestDto);
+                                           @RequestBody @Valid PageonceWriteRequestDto pageonceWriteRequestDto,
+                                           BindingResult bindingResult) {
+        return pageonceService.modify(userDetails, pageonceId, pageonceWriteRequestDto,bindingResult);
     }
 
     @PatchMapping("/delete/{pageonceId}")
