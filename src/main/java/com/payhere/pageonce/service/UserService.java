@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 
 import javax.transaction.Transactional;
 import java.util.Optional;
@@ -31,59 +32,75 @@ public class UserService {
     private String salt;
 
     @Transactional
-    public SignUpResponseDto register(SignUpRequestDto signUpRequestDto){
+    public SignUpResponseDto register(SignUpRequestDto signUpRequestDto, BindingResult bindingResult) {
         SignUpResponseDto signUpResponseDto;
-        String requestEmail = signUpRequestDto.getEmail();
-        Optional<User> existUser = userRepository.findByEmail(requestEmail);
-        if (existUser.isPresent()) {
+        if (bindingResult.hasErrors()) {
+            String message = bindingResult.getAllErrors().get(0).getDefaultMessage();
             signUpResponseDto = SignUpResponseDto.builder()
                     .success(false)
-                    .message("이미 존재하는 이메일입니다.")
+                    .message(message)
                     .build();
         } else {
-            String password = passwordEncoder.encode(signUpRequestDto.getPassword());
-            User user = User.builder()
-                    .email(requestEmail)
-                    .password(password)
-                    .build();
-            userRepository.save(user);
-            signUpResponseDto = SignUpResponseDto.builder()
-                    .success(true)
-                    .email(requestEmail)
-                    .message("성공적으로 가입되었습니다.")
-                    .build();
+            String requestEmail = signUpRequestDto.getEmail();
+            Optional<User> existUser = userRepository.findByEmail(requestEmail);
+            if (existUser.isPresent()) {
+                signUpResponseDto = SignUpResponseDto.builder()
+                        .success(false)
+                        .message("이미 존재하는 이메일입니다.")
+                        .build();
+            } else {
+                String password = passwordEncoder.encode(signUpRequestDto.getPassword());
+                User user = User.builder()
+                        .email(requestEmail)
+                        .password(password)
+                        .build();
+                userRepository.save(user);
+                signUpResponseDto = SignUpResponseDto.builder()
+                        .success(true)
+                        .email(requestEmail)
+                        .message("성공적으로 가입되었습니다.")
+                        .build();
+            }
         }
         return signUpResponseDto;
     }
 
-    public LoginResponseDto login(LoginRequestDto loginRequestDto){
+    public LoginResponseDto login(LoginRequestDto loginRequestDto, BindingResult bindingResult) {
         LoginResponseDto loginResponseDto;
-        String email = loginRequestDto.getEmail();
-        String password = loginRequestDto.getPassword();
-        Optional<User> user = userRepository.findByEmail(email);
-        if(!user.isPresent()){
+        if (bindingResult.hasErrors()) {
+            String message = bindingResult.getAllErrors().get(0).getDefaultMessage();
             loginResponseDto = LoginResponseDto.builder()
                     .success(false)
-                    .message("아이디 또는 비밀번호가 올바르지않습니다.")
+                    .message(message)
                     .build();
         } else {
-            String realPass = user.get().getPassword();
-            if (!passwordEncoder.matches(password,realPass)){
+            String email = loginRequestDto.getEmail();
+            String password = loginRequestDto.getPassword();
+            Optional<User> user = userRepository.findByEmail(email);
+            if (!user.isPresent()) {
                 loginResponseDto = LoginResponseDto.builder()
                         .success(false)
                         .message("아이디 또는 비밀번호가 올바르지않습니다.")
                         .build();
             } else {
-                Authentication emailPassword = new UsernamePasswordAuthenticationToken(email,password);
-                Authentication authentication = authenticationManager.authenticate(emailPassword);
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-                String token = jwtTokenProvider.createToken(user.get().getId().toString(),user.get().getEmail());
-                loginResponseDto = LoginResponseDto.builder()
-                        .success(true)
-                        .message("성공적으로 로그인 되었습니다.")
-                        .email(email)
-                        .token(token)
-                        .build();
+                String realPass = user.get().getPassword();
+                if (!passwordEncoder.matches(password, realPass)) {
+                    loginResponseDto = LoginResponseDto.builder()
+                            .success(false)
+                            .message("아이디 또는 비밀번호가 올바르지않습니다.")
+                            .build();
+                } else {
+                    Authentication emailPassword = new UsernamePasswordAuthenticationToken(email, password);
+                    Authentication authentication = authenticationManager.authenticate(emailPassword);
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    String token = jwtTokenProvider.createToken(user.get().getId().toString(), user.get().getEmail());
+                    loginResponseDto = LoginResponseDto.builder()
+                            .success(true)
+                            .message("성공적으로 로그인 되었습니다.")
+                            .email(email)
+                            .token(token)
+                            .build();
+                }
             }
         }
         return loginResponseDto;

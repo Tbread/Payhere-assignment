@@ -6,6 +6,7 @@ import com.payhere.pageonce.dto.response.LoginResponseDto;
 import com.payhere.pageonce.dto.response.SignUpResponseDto;
 import com.payhere.pageonce.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,12 +19,12 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public SignUpResponseDto register(@RequestBody @Valid SignUpRequestDto signUpRequestDto){
-        return userService.register(signUpRequestDto);
+    public SignUpResponseDto register(@RequestBody @Valid SignUpRequestDto signUpRequestDto, BindingResult bindingResult){
+        return userService.register(signUpRequestDto,bindingResult);
     }
 
     @PostMapping("/login")
-    public LoginResponseDto login(@RequestBody @Valid LoginRequestDto loginRequestDto){
-        return userService.login(loginRequestDto);
+    public LoginResponseDto login(@RequestBody @Valid LoginRequestDto loginRequestDto, BindingResult bindingResult){
+        return userService.login(loginRequestDto,bindingResult);
     }
 }
