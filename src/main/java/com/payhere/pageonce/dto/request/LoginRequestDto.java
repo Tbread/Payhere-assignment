@@ -1,5 +1,6 @@
 package com.payhere.pageonce.dto.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -7,6 +8,7 @@ import javax.validation.constraints.NotEmpty;
 
 @NoArgsConstructor
 @Getter
+@AllArgsConstructor
 public class LoginRequestDto {
 
     @NotEmpty(message = "이메일은 필수 입력 값입니다.")
