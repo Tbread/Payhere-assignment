@@ -70,7 +70,7 @@ public class PageonceService {
             } else {
                 pageonceDetailsResponseDto = PageonceDetailsResponseDto.builder()
                         .success(true)
-                        .message("성공적으로 불러왔습니다.")
+                        .message("성공적으로 가계부를 불러왔습니다.")
                         .expenditure(pageonce.getExpenditure())
                         .memo(pageonce.getMemo())
                         .createdAt(pageonce.getCreatedAt())

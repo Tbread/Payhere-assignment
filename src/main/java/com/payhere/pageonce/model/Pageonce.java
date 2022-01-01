@@ -1,6 +1,7 @@
 package com.payhere.pageonce.model;
 
 import com.payhere.pageonce.dto.request.PageonceWriteRequestDto;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,6 +33,14 @@ public class Pageonce extends TimeStamped{
         this.memo = memo;
         this.expenditure = expenditure;
         this.deleted = false;
+        this.userId = userId;
+    }
+
+    //테스트용
+    public Pageonce(String memo,Long expenditure,Long userId,boolean deleted){
+        this.memo = memo;
+        this.expenditure = expenditure;
+        this.deleted = deleted;
         this.userId = userId;
     }
 
