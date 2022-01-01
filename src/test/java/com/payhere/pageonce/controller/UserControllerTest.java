@@ -30,7 +30,7 @@ class UserControllerTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("회원가입-정상")
+    @DisplayName("01.회원가입-정상")
     public void registerSuccess() throws Exception {
         //given
         SignUpRequestDto signUpRequestDto = new SignUpRequestDto("test@test.com", "abc");
@@ -50,7 +50,7 @@ class UserControllerTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("회원가입실패-이메일누락")
+    @DisplayName("02.회원가입실패-이메일누락")
     public void registerFailNullEmail() throws Exception {
         //given
         SignUpRequestDto signUpRequestDto = new SignUpRequestDto(null, "abc");
@@ -71,7 +71,7 @@ class UserControllerTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("회원가입실패-패스워드누락")
+    @DisplayName("03.회원가입실패-패스워드누락")
     public void registerFailNullPassword() throws Exception {
         //given
         SignUpRequestDto signUpRequestDto = new SignUpRequestDto("test@test.com", null);
@@ -92,7 +92,7 @@ class UserControllerTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("회원가입실패-이메일형식")
+    @DisplayName("04.회원가입실패-이메일형식")
     public void registerFailValidEmail() throws Exception {
         //given
         SignUpRequestDto signUpRequestDto = new SignUpRequestDto("test", "abc");
@@ -113,7 +113,7 @@ class UserControllerTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("회원가입실패-모두누락")
+    @DisplayName("05.회원가입실패-모두누락")
     public void registerFailNull() throws Exception {
         //given
         SignUpRequestDto signUpRequestDto = new SignUpRequestDto(null, null);
@@ -134,7 +134,7 @@ class UserControllerTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("회원가입실패-중복이메일")
+    @DisplayName("06.회원가입실패-중복이메일")
     public void registerFailDupEmail() throws Exception {
         //given
         SignUpRequestDto signUpRequestDto = new SignUpRequestDto("test@email.com", "abc");
@@ -155,7 +155,7 @@ class UserControllerTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("로그인-정상")
+    @DisplayName("07.로그인-정상")
     public void loginSuccess() throws Exception {
         //given
         LoginRequestDto loginRequestDto = new LoginRequestDto("test@email.com", "abc");
@@ -177,7 +177,7 @@ class UserControllerTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("로그인실패-이메일누락")
+    @DisplayName("08.로그인실패-이메일누락")
     public void loginFailNullEmail() throws Exception {
         //given
         LoginRequestDto loginRequestDto = new LoginRequestDto(null, "abc");
@@ -199,7 +199,7 @@ class UserControllerTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("로그인실패-패스워드누락")
+    @DisplayName("09.로그인실패-패스워드누락")
     public void loginFailNullPassword() throws Exception {
         //given
         LoginRequestDto loginRequestDto = new LoginRequestDto("test@email.com", null);
@@ -221,7 +221,7 @@ class UserControllerTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("로그인실패-모두누락")
+    @DisplayName("10.로그인실패-모두누락")
     public void loginFailNull() throws Exception {
         //given
         LoginRequestDto loginRequestDto = new LoginRequestDto(null, null);
