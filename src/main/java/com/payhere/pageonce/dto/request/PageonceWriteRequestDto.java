@@ -9,7 +9,7 @@ import javax.validation.constraints.NotEmpty;
 @Getter
 public class PageonceWriteRequestDto {
 
-    @NotEmpty
+    @NotEmpty(message = "지출금액은 필수 값입니다")
     private Long expenditure;
 
     private String memo;
